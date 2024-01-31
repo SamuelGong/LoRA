@@ -82,7 +82,7 @@ python -m torch.distributed.launch --nproc_per_node=1 src/gpt2_ft.py \
     --random_seed 110
 ```
 
-**Zhifeng: for smaller scale:**
+**Zhifeng: for gpt2-small**
 
 ```
 python -m torch.distributed.launch --nproc_per_node=1 src/gpt2_ft.py \
@@ -133,6 +133,27 @@ python -m torch.distributed.launch --nproc_per_node=1 src/gpt2_beam.py \
     --output_file predict.26289.b10p08r4.jsonl
 ```
 
+**Zhifeng: for gpt2 small**
+```
+python -m torch.distributed.launch --nproc_per_node=1 src/gpt2_beam.py \
+    --data ./data/e2e/test.jsonl \
+    --batch_size 1 \
+    --seq_len 512 \
+    --eval_len 64 \
+    --model_card gpt2.sm \
+    --init_checkpoint ./trained_models/GPT2/e2e/model.26290.pt \
+    --platform local \
+    --lora_dim 4 \
+    --lora_alpha 32 \
+    --beam 10 \
+    --length_penalty 0.8 \
+    --no_repeat_ngram_size 4 \
+    --repetition_penalty 1.0 \
+    --eos_token_id 628 \
+    --work_dir ./trained_models/GPT2/e2e \
+    --output_file predict.26290.b10p08r4.jsonl
+```
+
 3. Decode outputs from step (2)
 ```
 python src/gpt2_decode.py \
@@ -142,6 +163,17 @@ python src/gpt2_decode.py \
     --output_ref_file e2e_ref.txt \
     --output_pred_file e2e_pred.txt
 ```
+
+**Zhifeng: for gpt2-small**
+```
+python src/gpt2_decode.py \
+    --vocab ./vocab \
+    --sample_file ./trained_models/GPT2/e2e/predict.26290.b10p08r4.jsonl \
+    --input_file ./data/e2e/test_formatted.jsonl \
+    --output_ref_file e2e_ref.txt \
+    --output_pred_file e2e_pred.txt
+```
+
 
 4. Run evaluation on E2E test set
 
